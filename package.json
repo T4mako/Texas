@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "check": "vue-tsc -b",
     "lint": "eslint . --ext .ts,.vue",
-    "lint:fix": "eslint . --ext .ts,.vue --fix"
+    "lint:fix": "eslint . --ext .ts,.vue --fix",
+    "start": "tsx api/server.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

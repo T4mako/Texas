@@ -27,10 +27,10 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# 安装仅生产依赖
+# 安装生产依赖及必要的dev依赖（tsx用于运行TypeScript）
 COPY package*.json ./
 
-RUN npm ci --omit=dev && \
+RUN npm ci --only=production && npm install tsx && \
     npm cache clean --force
 
 # 从 builder 阶段复制构建文件
@@ -43,6 +43,9 @@ ENV PORT=3001
 
 # 暴露端口
 EXPOSE 3001
+
+# 启动应用
+CMD ["npm", "start"]
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \

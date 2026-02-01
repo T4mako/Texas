@@ -51,7 +51,7 @@ case $choice in
         echo ""
         echo "✅ 启动完成！"
         echo ""
-        echo "应用访问地址：http://localhost:3001"
+        echo "应用访问地址：http://localhost:7456"
         echo ""
         echo "查看日志命令：docker-compose logs -f"
         ;;
@@ -61,7 +61,7 @@ case $choice in
         docker-compose up -d
         echo "✅ 容器已启动"
         echo ""
-        echo "应用访问地址：http://localhost:3001"
+        echo "应用访问地址：http://localhost:7456"
         ;;
     3)
         echo ""
@@ -75,7 +75,7 @@ case $choice in
         docker-compose restart
         echo "✅ 容器已重启"
         echo ""
-        echo "应用访问地址：http://localhost:3001"
+        echo "应用访问地址：http://localhost:7456"
         ;;
     5)
         echo ""
