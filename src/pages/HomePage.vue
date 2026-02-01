@@ -71,9 +71,7 @@ const handleJoin = async () => {
         <button 
           @click="handleJoin"
           class="w-full py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:from-yellow-400 hover:to-yellow-500 transform hover:scale-[1.02] transition shadow-lg"
-        >
-          Join / Create Room
-        </button>
+        >Join / Create Room</button>
       </div>
     </div>
   </div>

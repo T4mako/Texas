@@ -52,4 +52,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD node -e "import('http').then(({default:http})=>http.get('http://localhost:3001/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)))"
 
 # 启动服务器
-CMD ["node", "--loader", "tsx", "api/server.ts"]
+CMD ["node", "--import", "tsx", "api/server.ts"]

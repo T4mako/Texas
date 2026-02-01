@@ -16,6 +16,7 @@ export interface Player {
   isActive: boolean; // True if in the hand (not folded)
   isFolded: boolean;
   isAllIn: boolean;
+  isReady: boolean; // True if ready for next hand
   position: number; // 0 to maxPlayers-1
   hasActed: boolean; // True if player has acted in the current betting round
 }

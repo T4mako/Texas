@@ -29,7 +29,7 @@ const suitIcon = computed(() => {
   <div 
     class="bg-white rounded-lg shadow-md border-2 border-gray-200 flex flex-col items-center justify-center select-none relative overflow-hidden transition-transform transform hover:-translate-y-1"
     :class="[
-      small ? 'w-10 h-14 text-sm' : 'w-14 h-20 text-xl',
+      small ? 'w-8 h-12 md:w-10 md:h-14 text-xs md:text-sm' : 'w-10 h-14 md:w-14 md:h-20 text-sm md:text-xl',
       hidden ? 'bg-blue-800 border-blue-900' : 'bg-white'
     ]"
   >

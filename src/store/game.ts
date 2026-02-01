@@ -62,9 +62,14 @@ export const useGameStore = defineStore('game', {
       });
     },
 
-    startGame(initialChips: number) {
+    startGame(initialChips: number, resetChips: boolean = true) {
       if (!this.room) return;
-      socketService.emit('startGame', { roomId: this.room.id, initialChips });
+      socketService.emit('startGame', { roomId: this.room.id, initialChips, resetChips });
+    },
+
+    sendReady() {
+        if (!this.room) return;
+        socketService.emit('playerReady', { roomId: this.room.id });
     },
 
     sendAction(action: string, amount?: number) {

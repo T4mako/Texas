@@ -21,6 +21,7 @@ export function setupSocket(io: Server) {
           isActive: true,
           isFolded: false,
           isAllIn: false,
+          isReady: false,
           position: 0,
           hasActed: false
         };
@@ -56,17 +57,44 @@ export function setupSocket(io: Server) {
     });
 
     // Start Game
-    socket.on('startGame', ({ roomId, initialChips }: { roomId: string; initialChips: number }) => {
+    socket.on('startGame', ({ roomId, initialChips, resetChips }: { roomId: string; initialChips: number, resetChips?: boolean }) => {
       const room = roomManager.getRoom(roomId);
       if (!room) return;
       if (room.hostId !== socket.id) return; // Only host
 
       room.initialChips = initialChips;
-      // Reset chips for all players
-      room.players.forEach(p => p.chips = initialChips);
+      // Reset chips for all players if requested (default true)
+      if (resetChips !== false) {
+          room.players.forEach(p => p.chips = initialChips);
+      }
       
       GameEngine.initializeGame(room);
       io.to(roomId).emit('gameStateUpdate', room);
+    });
+
+    // Player Ready (Next Round)
+    socket.on('playerReady', ({ roomId }: { roomId: string }) => {
+        const room = roomManager.getRoom(roomId);
+        if (!room) return;
+
+        const player = room.players.find(p => p.id === socket.id);
+        if (!player) return;
+
+        player.isReady = true;
+
+        // Check if all players are ready
+        const allReady = room.players.every(p => p.isReady);
+        if (allReady && room.players.length >= 2) {
+            // Start next hand without resetting chips
+            GameEngine.initializeGame(room);
+            // Reset ready status is done inside initializeGame or here?
+            // Better here or GameEngine. Let's do it in GameEngine to be safe, 
+            // but for now we can rely on GameEngine not using isReady logic except for start.
+            // Actually, we should reset isReady to false after start.
+            room.players.forEach(p => p.isReady = false);
+        }
+        
+        io.to(roomId).emit('gameStateUpdate', room);
     });
 
     // Player Action
