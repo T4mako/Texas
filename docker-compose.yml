@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  texas-poker:
+    build: .
+    container_name: texas-poker-app
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: unless-stopped
+    networks:
+      - texas-network
+    # Optional: Add volume for persistent data if needed
+    # volumes:
+    #   - ./data:/app/data
+
+networks:
+  texas-network:
+    driver: bridge
