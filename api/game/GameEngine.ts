@@ -374,14 +374,16 @@ export class GameEngine {
     const bestScore = playerHands[0].hand.score;
     const winners = playerHands.filter(ph => ph.hand.score === bestScore).map(ph => ph.player);
     
-    // TODO: Handle side pots (Complex, skipping for MVP unless required)
     // MVP: Assuming one main pot for now. Side pots are tricky.
     
-    this.distributePot(room, winners, playerHands[0].hand.name);
+    // Store winning hand cards in winners
+    const winningHandCards = playerHands[0].hand.cards; 
+    
+    this.distributePot(room, winners, playerHands[0].hand.name, winningHandCards);
     room.gameState.status = 'finished';
   }
 
-  static distributePot(room: Room, winners: Player[], handDescription: string = 'Win') {
+  static distributePot(room: Room, winners: Player[], handDescription: string = 'Win', winningHand: Card[] = []) {
     const share = Math.floor(room.gameState.pot / winners.length);
     const remainder = room.gameState.pot % winners.length;
     
@@ -391,7 +393,8 @@ export class GameEngine {
         room.gameState.winners.push({
             playerId: w.id,
             amount: amount,
-            handDescription
+            handDescription,
+            winningHand
         });
     });
     room.gameState.pot = 0;

@@ -36,7 +36,7 @@ export interface GameState {
   communityCards: Card[];
   deck: Card[];
   bettingRound: number; // 0: Preflop, 1: Flop, 2: Turn, 3: River
-  winners: { playerId: string; amount: number; handDescription?: string }[];
+  winners: { playerId: string; amount: number; handDescription?: string; winningHand?: Card[] }[];
 }
 
 export interface Room {

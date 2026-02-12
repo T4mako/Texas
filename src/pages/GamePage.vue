@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useGameStore } from '@/store/game';
 import Card from '@/components/Card.vue';
 import { Trophy, Clock } from 'lucide-vue-next';
+import { evaluateHand } from '@/lib/poker';
 
 const router = useRouter();
 const gameStore = useGameStore();
@@ -87,6 +88,14 @@ const getPositionStyle = (index: number, total: number) => {
     left: `${x}%`,
     transform: 'translate(-50%, -50%)'
   };
+};
+
+// Helper to get player's current best hand name
+const getPlayerBestHand = (player: any) => {
+    if (!player || !player.cards || player.cards.length !== 2 || !gameStore.room) return '';
+    // Evaluate against community cards
+    const result = evaluateHand(player.cards, gameStore.room.gameState.communityCards);
+    return result.name;
 };
 
 const handleAction = async (action: string) => {
@@ -197,6 +206,20 @@ const getActionName = (action: string) => {
                FOLD
             </div>
             
+            <!-- Best Hand Display (Right Side) -->
+            <div v-if="!player.isFolded && (player.id === gameStore.currentPlayerId || gameStore.room.gameState.status === 'showdown' || gameStore.room.gameState.status === 'finished') && gameStore.room.gameState.communityCards.length >= 3" 
+                 class="absolute -right-24 md:-right-36 top-1/2 transform -translate-y-1/2 flex flex-col items-start z-20">
+                 
+                 <!-- Label Badge -->
+                 <div class="bg-gradient-to-r from-yellow-600/90 to-yellow-800/90 text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-t-lg md:rounded-r-lg md:rounded-bl-none shadow-lg border border-yellow-500/50 backdrop-blur-sm whitespace-nowrap flex items-center gap-1">
+                    <Trophy class="w-3 h-3 text-yellow-300" />
+                    {{ getPlayerBestHand(player) }}
+                 </div>
+                 
+                 <!-- Optional: Show the 5 cards that make the hand just below (miniature)? -->
+                 <!-- Maybe too much clutter, stick to nice badge for now -->
+            </div>
+
              <!-- Ready Status -->
             <div v-if="gameStore.room.gameState.status === 'finished' && player.isReady" class="absolute -top-8 md:-top-10 bg-green-500 text-white px-2 py-1 rounded text-[10px] md:text-xs font-bold animate-bounce">
                 READY
@@ -301,12 +324,17 @@ const getActionName = (action: string) => {
 
              <!-- Winners -->
              <div class="mb-8 text-white text-2xl space-y-4">
-                 <div v-for="winner in gameStore.room.gameState.winners" :key="winner.playerId" class="p-4 bg-yellow-500/20 rounded-xl border border-yellow-500/50">
-                     <div class="font-bold text-white">
+                 <div v-for="winner in gameStore.room.gameState.winners" :key="winner.playerId" class="p-4 bg-yellow-500/20 rounded-xl border border-yellow-500/50 flex flex-col items-center">
+                     <div class="font-bold text-white mb-2">
                          <span class="text-yellow-400">{{ gameStore.room.players.find(p => p.id === winner.playerId)?.nickname }}</span>
                          wins {{ winner.amount }}!
                      </div>
-                     <span class="text-lg text-gray-400 block mt-1">{{ winner.handDescription }}</span>
+                     <span class="text-lg text-gray-400 block mb-2">{{ winner.handDescription }}</span>
+                     
+                     <!-- Winning Hand Cards -->
+                     <div class="flex gap-2" v-if="winner.winningHand && winner.winningHand.length > 0">
+                        <Card v-for="(card, i) in winner.winningHand" :key="i" :card="card" small />
+                     </div>
                  </div>
              </div>
 
