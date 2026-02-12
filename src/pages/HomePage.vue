@@ -2,15 +2,18 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useGameStore } from '@/store/game';
-import { Store } from 'lucide-vue-next'; // Just a placeholder icon or similar
+import { Store, Loader2 } from 'lucide-vue-next'; // Just a placeholder icon or similar
 
 const nickname = ref('');
 const roomId = ref('');
 const error = ref('');
+const isJoining = ref(false);
 const router = useRouter();
 const gameStore = useGameStore();
 
 const handleJoin = async () => {
+  if (isJoining.value) return;
+
   if (!nickname.value || !roomId.value) {
     error.value = 'Please enter both nickname and room ID';
     return;
@@ -21,16 +24,20 @@ const handleJoin = async () => {
       return;
   }
 
-  // Generate 6 digit room ID if needed? User enters it manually.
-  // Validate roomId format? numeric? 
-  // Requirement says "Input 6 digit room number". 
-  // Let's enforce 6 digits or just string.
-  
-  const res = await gameStore.joinRoom(nickname.value, roomId.value);
-  if (res.success) {
-    router.push(`/lobby/${roomId.value}`);
-  } else {
-    error.value = res.error || 'Failed to join room';
+  isJoining.value = true;
+  error.value = '';
+
+  try {
+    const res = await gameStore.joinRoom(nickname.value, roomId.value);
+    if (res.success) {
+      router.push(`/lobby/${roomId.value}`);
+    } else {
+      error.value = res.error || 'Failed to join room';
+      isJoining.value = false;
+    }
+  } catch (e) {
+    error.value = 'An error occurred while joining';
+    isJoining.value = false;
   }
 };
 </script>
@@ -70,8 +77,12 @@ const handleJoin = async () => {
 
         <button 
           @click="handleJoin"
-          class="w-full py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:from-yellow-400 hover:to-yellow-500 transform hover:scale-[1.02] transition shadow-lg"
-        >Join / Create Room</button>
+          :disabled="isJoining"
+          class="w-full py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:from-yellow-400 hover:to-yellow-500 transform hover:scale-[1.02] transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+        >
+          <Loader2 v-if="isJoining" class="w-5 h-5 animate-spin" />
+          {{ isJoining ? 'Joining...' : 'Join / Create Room' }}
+        </button>
       </div>
     </div>
   </div>

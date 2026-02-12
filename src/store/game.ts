@@ -79,6 +79,15 @@ export const useGameStore = defineStore('game', {
            resolve(response);
         });
       });
+    },
+
+    addAi() {
+        if (!this.room) return;
+        return new Promise<{ success: boolean; message?: string }>((resolve) => {
+            socketService.emit('addAi', { roomId: this.room.id }, (response: any) => {
+                resolve(response);
+            });
+        });
     }
   }
 });

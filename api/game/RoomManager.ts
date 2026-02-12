@@ -63,6 +63,40 @@ export class RoomManager {
     return room;
   }
 
+  addAiPlayer(roomId: string): Room {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      throw new Error('Room not found');
+    }
+    if (room.players.length >= room.maxPlayers) {
+      throw new Error('Room is full');
+    }
+
+    const aiId = `ai_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    const aiPlayer: Player = {
+      id: aiId,
+      nickname: `Bot ${Math.floor(Math.random() * 100)}`,
+      chips: room.initialChips,
+      currentBet: 0,
+      totalBetInHand: 0,
+      cards: [],
+      isActive: !room.isGameRunning, // Join as inactive if game running
+      isFolded: false,
+      isAllIn: false,
+      isReady: true, // AI is always ready
+      position: room.players.length,
+      hasActed: false,
+      isAi: true
+    };
+
+    room.players.push(aiPlayer);
+    // AI doesn't have a socket, so we don't add to playerRoomMap?
+    // Actually we should, so we can find room by AI id if needed
+    this.playerRoomMap.set(aiId, roomId);
+    
+    return room;
+  }
+
   leaveRoom(playerId: string): Room | null {
     const roomId = this.playerRoomMap.get(playerId);
     if (!roomId) return null;

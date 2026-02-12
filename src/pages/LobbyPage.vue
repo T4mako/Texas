@@ -25,6 +25,10 @@ const startGame = () => {
   gameStore.startGame(initialChips.value);
 };
 
+const addAi = async () => {
+  await gameStore.addAi();
+};
+
 const copyRoomId = () => {
   navigator.clipboard.writeText(gameStore.room?.id || '');
   // Could add toast here
@@ -99,6 +103,15 @@ const copyRoomId = () => {
           <span class="text-xl font-mono font-bold w-20 text-right">{{ initialChips }}</span>
         </div>
       </div>
+
+      <button 
+        @click="addAi"
+        :disabled="gameStore.room.players.length >= gameStore.room.maxPlayers"
+        class="w-full mb-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg flex items-center justify-center gap-2 shadow-lg transition transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <Users class="w-5 h-5" />
+        Add AI Bot
+      </button>
 
       <button 
         @click="startGame"

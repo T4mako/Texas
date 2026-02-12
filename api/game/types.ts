@@ -19,6 +19,7 @@ export interface Player {
   isReady: boolean; // True if ready for next hand
   position: number; // 0 to maxPlayers-1
   hasActed: boolean; // True if player has acted in the current betting round
+  isAi?: boolean; // True if player is an AI bot
 }
 
 export type GameStatus = 'waiting' | 'preflop' | 'flop' | 'turn' | 'river' | 'showdown' | 'finished';

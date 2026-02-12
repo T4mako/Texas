@@ -302,7 +302,10 @@ const getActionName = (action: string) => {
              <!-- Winners -->
              <div class="mb-8 text-white text-2xl space-y-4">
                  <div v-for="winner in gameStore.room.gameState.winners" :key="winner.playerId" class="p-4 bg-yellow-500/20 rounded-xl border border-yellow-500/50">
-                     <div class="font-bold text-yellow-300">{{ gameStore.room.players.find(p => p.id === winner.playerId)?.nickname }} wins {{ winner.amount }}!</div>
+                     <div class="font-bold text-white">
+                         <span class="text-yellow-400">{{ gameStore.room.players.find(p => p.id === winner.playerId)?.nickname }}</span>
+                         wins {{ winner.amount }}!
+                     </div>
                      <span class="text-lg text-gray-400 block mt-1">{{ winner.handDescription }}</span>
                  </div>
              </div>
